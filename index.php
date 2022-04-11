@@ -2,8 +2,6 @@
 define("DIR", __DIR__);
 
 require_once DIR . "/connection/connect.php";
-// require_once DIR . "/core/app.php";
-
 
 
 //insert dataha
@@ -18,12 +16,12 @@ if(isset($_POST['submit']) && $_POST["submit"] == "add"){
         empty($lastName) || 
         empty($Email)) 
         {
-        $message = "please Enter completely. ";
+        $message = "<p class='error'> please Enter completely.</p>";
         $valid = false;
     }
 
     if(!filter_var($Email, FILTER_VALIDATE_EMAIL) && $valid ){
-        $message = " please enter a valid Email";
+        $message = "<p class='error'> please enter a valid Email. </p>";
         $valid = false;
     }
 
@@ -34,9 +32,9 @@ if(isset($_POST['submit']) && $_POST["submit"] == "add"){
                 VALUES ('$firstName' , '$lastName' , '$Email')";
 
         if($conn->query($sql) == true){
-            $message = "your data successfully added ";
+            $message = "<p class='success'> your data successfully added </p>";
         }else{
-            $message = "sorry a problem happend";
+            $message = "<p class='error'> sorry a problem happend </p>";
         }
     }else{
         $fname = $firstName;
@@ -54,20 +52,24 @@ if(isset($_POST['delete']) && $_POST['delete']=='delete'){
     $sql = "DELETE FROM student WHERE id={$_POST['deletId']}";
    
     if($conn->query($sql) == true){
-        $message = "your data successfully deleted ";
+        $message = "<p class='success'> your data successfully deleted </p> ";
     }else{
-        $message = "sorry a problem happend";
+        $message = "<p class='error'> sorry a problem happend </p> ";
     }
     
 }
 /////////////////////////////////////////////
 
+
 $disable = "";
 //marhale aval : gereftan etelaat az jadval database 
 if(isset($_POST['edit']) && $_POST['edit'] == 'edit'){
+
+    
     $sql = "SELECT * FROM student WHERE id ={$_POST['editId']}";
     $result = $conn->query($sql);
-
+    
+    $class_id = $_POST['editId'];
     $edit = true ;
     $disable = "disabled";
 
@@ -81,12 +83,12 @@ if(isset($_POST['edit']) && $_POST['edit'] == 'edit'){
     }
 
 }
-
 /////////////////////////////////////////////
 
 
 //marhale dovom : gozashtan etelaat dar jadval
 if(isset($_POST['edite']) && $_POST['edite']== 'edite'){
+    
     $idedit    = $_POST['editeId'];
     $fnameedit = $_POST['firstName'];
     $lnameedit = $_POST['lastName'];
@@ -98,12 +100,12 @@ if(isset($_POST['edite']) && $_POST['edite']== 'edite'){
         empty($lnameedit) || 
         empty($emailedit)) 
         {
-        $message = "please Enter completely. ";
+        $message = "<p class='error'> please Enter completely.</p> ";
         $valid = false;
     }
 
     if(!filter_var($emailedit, FILTER_VALIDATE_EMAIL) && $valid ){
-        $message = " please enter a valid Email";
+        $message = "<p class='error'> please enter a valid Email.</p>";
         $valid = false;
     }
 
@@ -112,11 +114,21 @@ if(isset($_POST['edite']) && $_POST['edite']== 'edite'){
         $sql = "UPDATE student SET firstName='$fnameedit', lastName='$lnameedit',Email='$emailedit' WHERE id={$idedit}";
 
         if($conn->query($sql) == true){
-            $message = " your data successfully updated ";
+            $message = "<p class='success'> your data successfully updated </p>";
         }else{
-            $message = "sorry a problem happend";
+            $message = "<p class='error'> sorry a problem happend.</p>";
         }
+    }else{
+        //hame chi kharab shode dobare emtehan konim
+        $class_id = $idedit ;
+        $edit = true ;
+        $disable = "disabled";
+        $id    = $idedit;
+        $fname = $fnameedit;
+        $lname = $lnameedit;
+        $email = $emailedit;
     }
+
 }
 
 /////////////////////////////////////////////
@@ -135,14 +147,6 @@ if ($result->num_rows > 0) {
 }
 
 /////////////////////////////////////////////
-
-
-
-
-
-
-
-
 
 
 
@@ -168,6 +172,7 @@ if ($result->num_rows > 0) {
                 <div class="card-content">
                 <span class="card-title">Personal Information</span>
                     <form method="POST">
+                        
                         <input type="text" name="firstName" id="first" value="<?php echo @$fname; ?>" placeholder="Enter your Name:">
                         <input type="text" name="lastName" id="last" value="<?php echo @$lname; ?>" placeholder="Enter your Family:">
                         <input type="text" name="Email" id="email" value="<?php echo @$email; ?>" placeholder="Enter your Email:">
@@ -189,20 +194,32 @@ if ($result->num_rows > 0) {
 
     <br>
 
-    <?php
-    if(isset($message)){
-        echo "<p>". $message . "</p>" ;
-    }
-    ?>
+    
+        <?php
+        if(isset($message)){
+            echo "<div class='row'>
+                    <div class='col s12 m6'>
+                        <div class='card'>
+                            <div class='card-content'>
+                                 $message 
+                            </div>
+                        </div>
+                    </div>
+                </div> " ;
+        }
+           
+        ?>
+                
+    
     <br>
 
     <div class="row">
-        <div class="col s12">
+        <div class="col s12 ">
             <div class="card">
                 <div class="card-content">
                 <span class="card-title">Checking Information</span>
                     <table>
-                        <tr>
+                        <tr >
                             <th>id</th>
                             <th>First Name</th>
                             <th>Last Name</th>
@@ -213,8 +230,16 @@ if ($result->num_rows > 0) {
                         </tr>
                         <?php  
                             
-                            foreach ($data as $d){
-                                echo "<tr>  
+                            foreach ($data as $d) {
+
+                                
+                                if( $d['id'] == $class_id) {
+                                    $class = "pink lighten-3";
+                                }else{
+                                    $class = "";
+                                }
+
+                                echo "<tr class='$class'>  
 
                                 <td>  {$d["id"]}  </td>
                                 <td>  {$d["firstName"]} </td>
