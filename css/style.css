@@ -1,0 +1,13 @@
+/* table , tr , th , td {
+    border: solid black;
+    border-collapse: collapse;
+} */
+p {
+    color: rgb(11, 75, 23);
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+th , td {
+    text-align: center;
+}
