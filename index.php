@@ -17,11 +17,13 @@ if(isset($_POST['submit']) && $_POST["submit"] == "add"){
         empty($Email)) 
         {
         $message = "<p class='error'> please Enter completely.</p>";
+        $msgColor = "red";
         $valid = false;
     }
 
     if(!filter_var($Email, FILTER_VALIDATE_EMAIL) && $valid ){
         $message = "<p class='error'> please enter a valid Email. </p>";
+        $msgColor = "red";
         $valid = false;
     }
 
@@ -33,8 +35,10 @@ if(isset($_POST['submit']) && $_POST["submit"] == "add"){
 
         if($conn->query($sql) == true){
             $message = "<p class='success'> your data successfully added </p>";
+            $msgColor = "green";
         }else{
             $message = "<p class='error'> sorry a problem happend </p>";
+            $msgColor = "red";
         }
     }else{
         $fname = $firstName;
@@ -53,8 +57,10 @@ if(isset($_POST['delete']) && $_POST['delete']=='delete'){
    
     if($conn->query($sql) == true){
         $message = "<p class='success'> your data successfully deleted </p> ";
+        $msgColor = "green";
     }else{
         $message = "<p class='error'> sorry a problem happend </p> ";
+        $msgColor = "red";
     }
     
 }
@@ -101,11 +107,13 @@ if(isset($_POST['edite']) && $_POST['edite']== 'edite'){
         empty($emailedit)) 
         {
         $message = "<p class='error'> please Enter completely.</p> ";
+        $msgColor = "red";
         $valid = false;
     }
 
     if(!filter_var($emailedit, FILTER_VALIDATE_EMAIL) && $valid ){
         $message = "<p class='error'> please enter a valid Email.</p>";
+        $msgColor = "red";
         $valid = false;
     }
 
@@ -115,8 +123,10 @@ if(isset($_POST['edite']) && $_POST['edite']== 'edite'){
 
         if($conn->query($sql) == true){
             $message = "<p class='success'> your data successfully updated </p>";
+            $msgColor = "green";
         }else{
             $message = "<p class='error'> sorry a problem happend.</p>";
+            $msgColor = "red";
         }
     }else{
         //hame chi kharab shode dobare emtehan konim
@@ -165,26 +175,40 @@ if ($result->num_rows > 0) {
     
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col s12">
-            <div class="card">
-                <div class="card-content">
+<div class="container ">
+    <div class="row ">
+        <div class="col s12 ">
+            <div class="card ">
+                <div class="card-content ">
                 <span class="card-title">Personal Information</span>
                     <form method="POST">
+                        <div class="row">
+                            <div class="input-field col s12 m6">
+                                <input type="text" name="firstName" id="first" value="<?php echo @$fname; ?>" placeholder="Enter your Name:">
+                            </div>
                         
-                        <input type="text" name="firstName" id="first" value="<?php echo @$fname; ?>" placeholder="Enter your Name:">
-                        <input type="text" name="lastName" id="last" value="<?php echo @$lname; ?>" placeholder="Enter your Family:">
-                        <input type="text" name="Email" id="email" value="<?php echo @$email; ?>" placeholder="Enter your Email:">
-                        <input type="submit" value="add" name="submit" id="add_id" class="waves-effect waves-light btn" <?php echo @$disable; ?> > 
+                            <div class="input-field col s12 m6">
+                                <input type="text" name="lastName" id="last" value="<?php echo @$lname; ?>" placeholder="Enter your Family:">
+                            </div>
                         
-                        <?php
-                        if($edit == true){
-                            echo "<input type='submit' value='edite' name='edite' class='waves-effect waves-light btn'>";
-                            echo "<input type='hidden' value='{$id}' name='editeId'>";
-                        }
-     
-                        ?>
+                            <div class="input-field col s12 m6">   
+                                <input type="text" name="Email" id="email" value="<?php echo @$email; ?>" placeholder="Enter your Email:">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">      
+                                <input type="submit" value="add" name="submit" id="add_id" class="waves-effect waves-light btn" <?php echo @$disable; ?> > 
+                                
+                                <?php
+                                if($edit == true){
+                                    echo "<input type='submit' value='edite' name='edite' class='waves-effect waves-light btn'>";
+                                    echo "<input type='hidden' value='{$id}' name='editeId'>";
+                                    echo "<a href='index.php' style='color:black;margin-left: 5px;' id='aId' class='waves-effect waves-light btn'>cancel</a> ";
+                                }
+            
+                                ?>
+                            </div>
+                        </div>
                     
                     </form>
                 </div>
@@ -197,9 +221,9 @@ if ($result->num_rows > 0) {
     
         <?php
         if(isset($message)){
-            echo "<div class='row'>
+            echo "<div class='row '>
                     <div class='col s12 m6'>
-                        <div class='card'>
+                        <div class='card $msgColor'>
                             <div class='card-content'>
                                  $message 
                             </div>

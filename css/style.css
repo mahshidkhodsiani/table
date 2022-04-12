@@ -8,11 +8,12 @@ th , td {
 }
 
 .error{
-    color: red ;
+    color: rgb(5, 0, 0) ;
     font-size: 20px;
+    
 }
 
 .success {
-    color: teal ;
+    color: rgb(1, 3, 3) ;
     font-size: 20px;
 }
