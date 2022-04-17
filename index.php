@@ -147,7 +147,27 @@ if(isset($_POST['edite']) && $_POST['edite']== 'edite'){
 
 // SELECT DATA
 // hamishe select mikonad
-$sql = "SELECT * FROM student";
+$count = 10;
+$page  = $_REQUEST['page'];
+if (empty($page)) {
+    $page = 0;
+}
+$start = $page * $count;
+
+
+$sql = "SELECT count(id) as cid FROM student ";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $total = $row['cid']; 
+    }
+}
+
+$pages = floor($total / $count);
+
+
+
+$sql = "SELECT * FROM student LIMIT $start , $count ";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -170,8 +190,13 @@ if ($result->num_rows > 0) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./materialaize/materialaize1.css"> 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
     <title>Document</title>
+
+    <style>
+
+    </style>
     
 </head>
 <body>
@@ -252,11 +277,12 @@ if ($result->num_rows > 0) {
                             <th>Delete</th>
                             <th>Edit</th>
                         </tr>
-                        <?php  
-                            
+                        <?php
+                          
+                            $f=1;
                             foreach ($data as $d) {
 
-                                
+
                                 if( $d['id'] == $class_id) {
                                     $class = "pink lighten-3";
                                 }else{
@@ -264,8 +290,7 @@ if ($result->num_rows > 0) {
                                 }
 
                                 echo "<tr class='$class'>  
-
-                                <td>  {$d["id"]}  </td>
+                                <td>  $f  </td>
                                 <td>  {$d["firstName"]} </td>
                                 <td>  {$d["lastName"] } </td>
                                 <td>  {$d["Email"] } </td>
@@ -283,10 +308,40 @@ if ($result->num_rows > 0) {
                                     </form>
                                 </td>
                                 </tr>";
+                                $f++;
                             }
+                            
                             
                         ?>
                     </table>
+                    <?php
+
+
+                    if($page == 0){
+                        $disable ="disabled";
+                    }elseif($page == $pages){
+                        $dis ="disabled";
+                    }
+
+                    echo "<ul class='pagination center-align'>";
+                    echo "<li class='$disable'><a href='?page=".($page-1)."'><i class='material-icons'>chevron_left</i></a></li>" ;
+                    for($i=0 ; $i<= $pages ; $i++){
+
+                        
+                        if($page == $i){
+                            $class = "active";
+                        }else{
+                            $class="";
+                        }
+                        
+                        echo "<li class='waves-effect $class'><a href='?page=$i'> ".($i+1). " </a> </li>";
+                     
+                    }
+                    echo "<li class='$dis'><a href='?page=".($page+1)."'><i class='material-icons'>navigate_next</i></a></li>" ;
+                    echo "</ul>" ;
+                        
+                    
+                    ?>
                 </div>
             </div>
         </div>
