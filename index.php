@@ -142,6 +142,19 @@ if(isset($_POST['edite']) && $_POST['edite']== 'edite'){
 }
 
 /////////////////////////////////////////////
+$where =  ' 1 ';
+if(isset($_POST['search']) && $_POST['search'] == 'search'){
+
+    if (isset($_POST['sname']) && !empty($_POST['sname'])){
+        $name = $_POST['sname'];
+        $where .= " AND firstName LIKE '%$name%' ";
+    }
+
+    if (isset($_POST['lname']) && !empty($_POST['lname'])){
+        $name = $_POST['lname'];
+        $where .= " AND lastName LIKE '%$name%' ";
+    }
+}
 
 
 
@@ -155,7 +168,7 @@ if (empty($page)) {
 $start = $page * $count;
 
 
-$sql = "SELECT count(id) as cid FROM student ";
+$sql = "SELECT count(id) as cid FROM student  WHERE $where ";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
@@ -167,7 +180,11 @@ $pages = floor($total / $count);
 
 
 
-$sql = "SELECT * FROM student LIMIT $start , $count ";
+$sql = "SELECT * FROM student 
+    WHERE $where
+    ORDER BY reg_date DESC
+    LIMIT $start , $count  ";
+
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -243,6 +260,26 @@ if ($result->num_rows > 0) {
 
     <br>
 
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                <span class="card-title">search</span>
+                    <form method="POST">
+                        <div class="row">
+                            <div class="input-field col s12 m6">
+                                <input type="text" name="sname" id="searchfield" placeholder="search by name">
+                            </div>
+                            <div class="col s12">
+                                <input type="submit" name="search" value="search" class="waves-effect waves-light btn">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
     
         <?php
         if(isset($message)){
@@ -279,7 +316,9 @@ if ($result->num_rows > 0) {
                         </tr>
                         <?php
                           
-                            $f=1;
+                          
+                            $f= $start + 1;
+                          
                             foreach ($data as $d) {
 
 
@@ -325,8 +364,9 @@ if ($result->num_rows > 0) {
 
                     echo "<ul class='pagination center-align'>";
                     echo "<li class='$disable'><a href='?page=".($page-1)."'><i class='material-icons'>chevron_left</i></a></li>" ;
+                   
                     for($i=0 ; $i<= $pages ; $i++){
-
+                      
                         
                         if($page == $i){
                             $class = "active";
@@ -335,7 +375,7 @@ if ($result->num_rows > 0) {
                         }
                         
                         echo "<li class='waves-effect $class'><a href='?page=$i'> ".($i+1). " </a> </li>";
-                     
+                        
                     }
                     echo "<li class='$dis'><a href='?page=".($page+1)."'><i class='material-icons'>navigate_next</i></a></li>" ;
                     echo "</ul>" ;
